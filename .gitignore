@@ -1,0 +1,37 @@
+# Environment & Secret Configuration Files
+WEB-INF/.env
+.env
+*.env
+*.key
+*.pem
+*.p12
+
+# Tomcat Build, Log & Class Files
+*.class
+/WEB-INF/classes/
+/work/
+/temp/
+/logs/
+/target/
+build/
+bin/
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor Directories
+.idea/
+.vscode/
+*.iml
+*.project
+*.classpath
+.settings/
+
+# Temporary and Scratch Files
+/scratch/
+scratch_*.jsp
+copy_images.jsp
+copy_jar.jsp
+git_push.bat
