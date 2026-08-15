@@ -329,10 +329,8 @@ String initial = fullName != null && fullName.length() > 0 ? fullName.substring(
           boolean hasOrders = false;
           if(con != null) {
               try {
-                  PreparedStatement ordPs = con.prepareStatement("SELECT * FROM orfood WHERE user_id = ? OR LOWER(email) = ? OR monumber = ? ORDER BY id DESC");
+                  PreparedStatement ordPs = con.prepareStatement("SELECT * FROM orfood WHERE user_id = ? ORDER BY id DESC");
                   ordPs.setInt(1, userId);
-                  ordPs.setString(2, email.toLowerCase());
-                  ordPs.setString(3, phone);
 
                   ResultSet ordRs = ordPs.executeQuery();
                   while(ordRs.next()) {

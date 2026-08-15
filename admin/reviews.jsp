@@ -140,8 +140,8 @@ if(deleteId != null && con != null) {
                     <%
                     if(con != null) {
                         try {
-                            Statement st = con.createStatement();
-                            ResultSet rs = st.executeQuery("SELECT r.*, u.email FROM reviews r LEFT JOIN users u ON r.user_id = u.user_id ORDER BY r.id DESC");
+                            PreparedStatement st = con.prepareStatement("SELECT r.*, u.email FROM reviews r LEFT JOIN users u ON r.user_id = u.user_id ORDER BY r.id DESC");
+                            ResultSet rs = st.executeQuery();
                             while(rs.next()) {
                                 int rId = rs.getInt("id");
                                 int uId = rs.getInt("user_id");

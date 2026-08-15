@@ -71,8 +71,8 @@ if(!isAdminSession) {
                     Connection con = getDbConnection();
                     if(con != null) {
                         try {
-                            Statement st = con.createStatement();
-                            ResultSet rs = st.executeQuery("SELECT l.*, u.full_name FROM login_activity l LEFT JOIN users u ON l.user_id = u.user_id ORDER BY l.login_id DESC");
+                            PreparedStatement st = con.prepareStatement("SELECT l.*, u.full_name FROM login_activity l LEFT JOIN users u ON l.user_id = u.user_id ORDER BY l.login_id DESC");
+                            ResultSet rs = st.executeQuery();
                             while(rs.next()) {
                                 int logId = rs.getInt("login_id");
                                 String name = rs.getString("full_name");

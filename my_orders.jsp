@@ -155,10 +155,8 @@ if(!navLoggedIn) {
     Connection con = getDbConnection();
     if(con != null) {
         try {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM orfood WHERE user_id = ? OR LOWER(email) = ? OR monumber = ? ORDER BY id DESC");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM orfood WHERE user_id = ? ORDER BY id DESC");
             ps.setInt(1, userId);
-            ps.setString(2, userEmail.toLowerCase());
-            ps.setString(3, userPhone);
 
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {

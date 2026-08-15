@@ -19,8 +19,8 @@ Connection con = getDbConnection();
 
 int totalMessages = 0;
 try {
-    Statement stCount = con.createStatement();
-    ResultSet rsCount = stCount.executeQuery("SELECT COUNT(*) FROM contact");
+    PreparedStatement stCount = con.prepareStatement("SELECT COUNT(*) FROM contact");
+    ResultSet rsCount = stCount.executeQuery();
     if(rsCount.next()) totalMessages = rsCount.getInt(1);
     stCount.close();
 } catch(Exception e){}
@@ -81,8 +81,8 @@ try {
                 <tbody>
                     <%
                     try {
-                        Statement st = con.createStatement();
-                        ResultSet rs = st.executeQuery("SELECT * FROM contact ORDER BY id DESC");
+                        PreparedStatement st = con.prepareStatement("SELECT * FROM contact ORDER BY id DESC");
+                        ResultSet rs = st.executeQuery();
                         while(rs.next()) {
                             int id = rs.getInt("id");
                             String name = sanitizeHtml(rs.getString("nam"));

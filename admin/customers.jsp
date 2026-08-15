@@ -60,8 +60,8 @@ if (adminUser == null || !"ADMIN".equalsIgnoreCase((String) adminUser.get("role"
                     <%
                     try {
                         Connection con = getDbConnection();
-                        Statement st = con.createStatement();
-                        ResultSet rs = st.executeQuery("SELECT * FROM customers ORDER BY id DESC");
+                        PreparedStatement st = con.prepareStatement("SELECT * FROM customers ORDER BY id DESC");
+                        ResultSet rs = st.executeQuery();
                         while(rs.next()) {
                     %>
                     <tr>

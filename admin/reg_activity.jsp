@@ -73,8 +73,8 @@ if(!isAdminSession) {
                     Connection con = getDbConnection();
                     if(con != null) {
                         try {
-                            Statement st = con.createStatement();
-                            ResultSet rs = st.executeQuery("SELECT * FROM users ORDER BY user_id DESC");
+                            PreparedStatement st = con.prepareStatement("SELECT * FROM users ORDER BY user_id DESC");
+                            ResultSet rs = st.executeQuery();
                             while(rs.next()) {
                                 int uId = rs.getInt("user_id");
                                 String name = rs.getString("full_name");

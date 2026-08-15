@@ -208,8 +208,8 @@ if(deleteId != null && con != null) {
                     <%
                     if(con != null) {
                         try {
-                            Statement st = con.createStatement();
-                            ResultSet rs = st.executeQuery("SELECT * FROM orfood ORDER BY id DESC");
+                            PreparedStatement st = con.prepareStatement("SELECT * FROM orfood ORDER BY id DESC");
+                            ResultSet rs = st.executeQuery();
                             while(rs.next()) {
                                 int id = rs.getInt("id");
                                 String foodName = sanitizeHtml(rs.getString("nm"));
