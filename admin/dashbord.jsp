@@ -26,34 +26,32 @@
     try {
         con = getDbConnection();
         if(con != null) {
-            Statement st = con.createStatement();
-
-            // Auto Create Tables
-            st.executeUpdate("CREATE TABLE IF NOT EXISTS contact (id int(11) NOT NULL AUTO_INCREMENT, nam varchar(100) NOT NULL, email varchar(100) NOT NULL, number varchar(50) NOT NULL, comment text NOT NULL, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-            st.executeUpdate("CREATE TABLE IF NOT EXISTS customers (id int(11) NOT NULL AUTO_INCREMENT, name varchar(100) DEFAULT NULL, email varchar(100) DEFAULT NULL, phone varchar(15) DEFAULT NULL, password varchar(100) DEFAULT NULL, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-            st.executeUpdate("CREATE TABLE IF NOT EXISTS orfood (id int(11) NOT NULL AUTO_INCREMENT, nm varchar(100) NOT NULL, rs varchar(100) NOT NULL, cname varchar(100) NOT NULL, email varchar(100) NOT NULL, monumber varchar(100) NOT NULL, comm text NOT NULL, order_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-            st.executeUpdate("CREATE TABLE IF NOT EXISTS products (id int(11) NOT NULL AUTO_INCREMENT, name varchar(100) NOT NULL, price int(11) NOT NULL, category varchar(50) DEFAULT 'Fast Food', rating decimal(2,1) DEFAULT 4.5, image varchar(200) DEFAULT NULL, PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-            st.executeUpdate("CREATE TABLE IF NOT EXISTS reviews (id int(11) NOT NULL AUTO_INCREMENT, name varchar(100) NOT NULL, rating int(11) NOT NULL DEFAULT 5, comment text NOT NULL, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-
-            // Seed products if empty
-            ResultSet pCheck = st.executeQuery("SELECT COUNT(*) FROM products");
-            if(pCheck.next() && pCheck.getInt(1) == 0) {
-                st.executeUpdate("INSERT INTO products (name, price, category, image) VALUES ('Chicken Nuggets', 200, 'Starters', 'chicken nuggets.png'), ('Garlic Bread', 150, 'Starters', 'Garlic bread.png'), ('Chole Kulche', 250, 'Main Course', 'Chole Kulche.png'), ('Fried Rice', 180, 'Main Course', 'Pineapple_Fried_Rice.png'), ('Paneer Special', 300, 'Main Course', 'paneer.png'), ('Crispy Chicken', 270, 'Fast Food', 'crispy_fried.png'), ('Dahi Vada', 100, 'Starters', 'Dahi vada.png'), ('Seekh Kabab', 250, 'Starters', 'Lyulya_kebab.png'), ('Super Burger', 350, 'Fast Food', 'burger.png'), ('Butter Chicken', 400, 'Main Course', 'butter chicken.jpeg'), ('Biryani', 500, 'Main Course', 'Biryani.jpeg'), ('Italian Pizza', 350, 'Fast Food', 'pizza.png')");
-            }
-
-            ResultSet rs1 = st.executeQuery("SELECT COUNT(*) FROM orfood");
+            PreparedStatement ps1 = con.prepareStatement("SELECT COUNT(*) FROM orfood");
+            ResultSet rs1 = ps1.executeQuery();
             if(rs1.next()) totalOrders = rs1.getInt(1);
+            rs1.close();
+            ps1.close();
 
-            ResultSet rs2 = st.executeQuery("SELECT COUNT(*) FROM products");
+            PreparedStatement ps2 = con.prepareStatement("SELECT COUNT(*) FROM products");
+            ResultSet rs2 = ps2.executeQuery();
             if(rs2.next()) totalProducts = rs2.getInt(1);
+            rs2.close();
+            ps2.close();
 
-            ResultSet rs3 = st.executeQuery("SELECT SUM(CAST(rs AS UNSIGNED)) FROM orfood");
+            PreparedStatement ps3 = con.prepareStatement("SELECT SUM(CAST(rs AS UNSIGNED)) FROM orfood");
+            ResultSet rs3 = ps3.executeQuery();
             if(rs3.next()) totalSales = rs3.getInt(1);
+            rs3.close();
+            ps3.close();
 
-            ResultSet rs4 = st.executeQuery("SELECT COUNT(*) FROM contact");
+            PreparedStatement ps4 = con.prepareStatement("SELECT COUNT(*) FROM contact");
+            ResultSet rs4 = ps4.executeQuery();
             if(rs4.next()) totalMessages = rs4.getInt(1);
+            rs4.close();
+            ps4.close();
 
-            rsOrders = st.executeQuery("SELECT * FROM orfood ORDER BY id DESC LIMIT 6");
+            PreparedStatement psOrders = con.prepareStatement("SELECT * FROM orfood ORDER BY id DESC LIMIT 6");
+            rsOrders = psOrders.executeQuery();
             dbConnected = true;
         } else {
             dbErrorMessage = lastDbError != null ? lastDbError : "MySQL Server is currently stopped on localhost:3306. Please click Start next to MySQL in XAMPP!";

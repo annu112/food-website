@@ -128,10 +128,8 @@ if(toggleId != null && newStatus != null && con != null) {
                     <%
                     if(con != null) {
                         try {
-                            Statement st = con.createStatement();
-                            try { st.executeUpdate("ALTER TABLE orfood ADD COLUMN user_id INT DEFAULT NULL"); } catch(Exception ignore){}
-                            try { st.executeUpdate("ALTER TABLE reviews ADD COLUMN user_id INT DEFAULT NULL"); } catch(Exception ignore){}
-                            ResultSet rs = st.executeQuery("SELECT u.*, (SELECT COUNT(*) FROM orfood o WHERE (o.user_id = u.user_id OR (u.email IS NOT NULL AND u.email != '' AND LOWER(o.email) = LOWER(u.email)))) AS order_count, (SELECT COUNT(*) FROM reviews r WHERE (r.user_id = u.user_id OR (u.full_name IS NOT NULL AND LOWER(r.name) = LOWER(u.full_name)))) AS review_count FROM users u ORDER BY u.user_id DESC");
+                            PreparedStatement st = con.prepareStatement("SELECT u.*, (SELECT COUNT(*) FROM orfood o WHERE (o.user_id = u.user_id OR (u.email IS NOT NULL AND u.email != '' AND LOWER(o.email) = LOWER(u.email)))) AS order_count, (SELECT COUNT(*) FROM reviews r WHERE (r.user_id = u.user_id OR (u.full_name IS NOT NULL AND LOWER(r.name) = LOWER(u.full_name)))) AS review_count FROM users u ORDER BY u.user_id DESC");
+                            ResultSet rs = st.executeQuery();
                             while(rs.next()) {
                                 int uId = rs.getInt("user_id");
                                 String name = sanitizeHtml(rs.getString("full_name"));

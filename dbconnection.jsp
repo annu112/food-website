@@ -46,6 +46,38 @@
         }
     }
 
+    /* CSRF TOKEN GENERATOR AND VERIFIER */
+    public static String getCsrfToken(HttpSession session) {
+        if (session == null) return "";
+        String token = (String) session.getAttribute("CSRF_TOKEN");
+        if (token == null || token.isEmpty()) {
+            token = java.util.UUID.randomUUID().toString();
+            session.setAttribute("CSRF_TOKEN", token);
+        }
+        return token;
+    }
+
+    public static boolean isValidCsrfToken(HttpServletRequest request, HttpSession session) {
+        if (session == null) return false;
+        String sessionToken = (String) session.getAttribute("CSRF_TOKEN");
+        if (sessionToken == null || sessionToken.isEmpty()) return false;
+        String requestToken = request.getParameter("csrf_token");
+        if (requestToken == null || requestToken.isEmpty()) {
+            requestToken = request.getHeader("X-CSRF-TOKEN");
+        }
+        return sessionToken.equals(requestToken);
+    }
+
+    /* INJECT SECURITY RESPONSE HEADERS */
+    public static void setSecurityHeaders(HttpServletResponse response) {
+        if (response != null) {
+            response.setHeader("X-Frame-Options", "DENY");
+            response.setHeader("X-Content-Type-Options", "nosniff");
+            response.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+            response.setHeader("X-XSS-Protection", "1; mode=block");
+        }
+    }
+
     /* HTML Sanitizer (XSS Protection) */
     public static String sanitizeHtml(String input) {
         if(input == null) return "";
@@ -697,6 +729,7 @@
                 }
             }
 
+            setSecurityHeaders(response);
             if(conn != null) {
                 if(!dbTablesUpgraded) {
                     try {

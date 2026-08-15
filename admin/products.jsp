@@ -157,8 +157,8 @@ if(name != null && price != null && con != null) {
                     <%
                     if(con != null) {
                         try {
-                            Statement st = con.createStatement();
-                            ResultSet rs = st.executeQuery("SELECT * FROM products ORDER BY id DESC");
+                            PreparedStatement st = con.prepareStatement("SELECT * FROM products ORDER BY id DESC");
+                            ResultSet rs = st.executeQuery();
                             while(rs.next()) {
                                 int id = rs.getInt("id");
                                 String pName = rs.getString("name");

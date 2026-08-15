@@ -9,21 +9,64 @@ String password = request.getParameter("password");
 String error = null;
 
 if(username != null && password != null){
-    if(username.equals("admin") && password.equals("123")){
-        session.setAttribute("adminUser", "admin");
+    String inputUser = username.trim();
+    String passHash = hashPassword(password);
+    boolean authenticated = false;
+    String adminName = "Administrator";
+    String adminEmail = "admin@zkitchen.com";
+    int adminId = 0;
+
+    String envAdminUser = getSmtpConfig("ADMIN_USERNAME");
+    String envAdminPass = getSmtpConfig("ADMIN_PASSWORD");
+
+    if (envAdminUser != null && !envAdminUser.trim().isEmpty() && envAdminPass != null && !envAdminPass.trim().isEmpty()) {
+        if (inputUser.equalsIgnoreCase(envAdminUser.trim()) && password.equals(envAdminPass.trim())) {
+            authenticated = true;
+            adminEmail = envAdminUser;
+        }
+    }
+
+    if (!authenticated) {
+        Connection con = getDbConnection();
+        if (con != null) {
+            try {
+                PreparedStatement ps = con.prepareStatement("SELECT * FROM users WHERE (LOWER(email) = ? OR phone_number = ? OR LOWER(full_name) = ?) AND role = 'ADMIN' AND password_hash = ?");
+                ps.setString(1, inputUser.toLowerCase());
+                ps.setString(2, inputUser);
+                ps.setString(3, inputUser.toLowerCase());
+                ps.setString(4, passHash);
+
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    authenticated = true;
+                    adminId = rs.getInt("user_id");
+                    adminName = rs.getString("full_name");
+                    if (rs.getString("email") != null) adminEmail = rs.getString("email");
+                }
+                rs.close();
+                ps.close();
+                con.close();
+            } catch (Exception ex) {
+                error = "Database authentication error.";
+            }
+        }
+    }
+
+    if (authenticated) {
+        session.setAttribute("adminUser", adminEmail);
         session.setAttribute("userRole", "ADMIN");
 
         Map<String, Object> adminLoggedUser = new HashMap<String, Object>();
-        adminLoggedUser.put("user_id", 0);
-        adminLoggedUser.put("full_name", "Administrator");
-        adminLoggedUser.put("email", "admin@zkitchen.com");
+        adminLoggedUser.put("user_id", adminId);
+        adminLoggedUser.put("full_name", adminName);
+        adminLoggedUser.put("email", adminEmail);
         adminLoggedUser.put("role", "ADMIN");
         session.setAttribute("loggedUser", adminLoggedUser);
 
         response.sendRedirect("dashbord.jsp");
         return;
     } else {
-        error = "Invalid Username or Password";
+        if (error == null) error = "Invalid Admin Credentials";
     }
 }
 %>

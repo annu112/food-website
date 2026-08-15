@@ -41,7 +41,7 @@ if(con != null) {
                 errorMessage = "Maximum verification attempts exceeded. Please request a new OTP.";
             } else if(expiresAt != null && expiresAt.before(new java.util.Date())) {
                 errorMessage = "OTP has expired. Please click Resend OTP.";
-            } else if(inputHash.equals(storedHash) || (testModeEnabled && "555555".equals(inputOtp.trim()))) {
+            } else if(inputHash.equals(storedHash)) {
                 isValid = true;
                 // Mark OTP verified
                 PreparedStatement markPs = con.prepareStatement("UPDATE user_otps SET verified = 1 WHERE id = ?");
